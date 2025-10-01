@@ -29,7 +29,5 @@ yarn-error.*
 /ios
 /android
 
-README.md
-**/README.md
-gitmodi.sh
+**/*.md
 create_git_history.sh
