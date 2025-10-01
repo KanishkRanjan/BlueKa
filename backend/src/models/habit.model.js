@@ -1,9 +1,6 @@
 const db = require('../config/db');
 
 class HabitModel {
-  /**
-   * Find all habits for a user
-   */
   static async findByUserId(userId) {
     const [rows] = await db.query(
       `SELECT h.*, i.identity_name 
@@ -16,9 +13,6 @@ class HabitModel {
     return rows;
   }
 
-  /**
-   * Find habits by identity
-   */
   static async findByIdentityId(identityId) {
     const [rows] = await db.query(
       'SELECT * FROM habits WHERE identity_id = ? AND deleted_at IS NULL ORDER BY created_at DESC',
@@ -27,9 +21,6 @@ class HabitModel {
     return rows;
   }
 
-  /**
-   * Find habit by ID
-   */
   static async findById(id) {
     const [rows] = await db.query(
       `SELECT h.*, i.identity_name 
@@ -41,9 +32,6 @@ class HabitModel {
     return rows[0];
   }
 
-  /**
-   * Create new habit
-   */
   static async create(habitData) {
     const {
       identity_id,
@@ -95,9 +83,6 @@ class HabitModel {
     return this.findById(result.insertId);
   }
 
-  /**
-   * Update habit
-   */
   static async update(id, habitData) {
     const allowedFields = [
       'habit_name',
@@ -141,9 +126,6 @@ class HabitModel {
     return this.findById(id);
   }
 
-  /**
-   * Soft delete habit
-   */
   static async delete(id) {
     const [result] = await db.query(
       'UPDATE habits SET deleted_at = NOW() WHERE id = ?',
@@ -152,9 +134,6 @@ class HabitModel {
     return result.affectedRows > 0;
   }
 
-  /**
-   * Get habit with statistics
-   */
   static async findByIdWithStats(id) {
     const [rows] = await db.query(
       `SELECT h.*, i.identity_name,
@@ -168,9 +147,6 @@ class HabitModel {
     return rows[0];
   }
 
-  /**
-   * Get active habits for user
-   */
   static async findActiveByUserId(userId) {
     const [rows] = await db.query(
       `SELECT h.*, i.identity_name 
@@ -183,9 +159,6 @@ class HabitModel {
     return rows;
   }
 
-  /**
-   * Check if habit belongs to user
-   */
   static async belongsToUser(habitId, userId) {
     const [rows] = await db.query(
       'SELECT id FROM habits WHERE id = ? AND user_id = ? AND deleted_at IS NULL',
@@ -194,9 +167,6 @@ class HabitModel {
     return rows.length > 0;
   }
 
-  /**
-   * Update streak count
-   */
   static async updateStreak(id, streakCount) {
     await db.query(
       'UPDATE habits SET streak_count = ?, best_streak = GREATEST(best_streak, ?), updated_at = NOW() WHERE id = ?',

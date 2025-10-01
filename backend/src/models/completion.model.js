@@ -1,9 +1,6 @@
 const db = require('../config/db');
 
 class CompletionModel {
-  /**
-   * Find all completions for a user
-   */
   static async findByUserId(userId, limit = 100) {
     const [rows] = await db.query(
       `SELECT c.*, h.habit_name, h.color, h.icon
@@ -17,9 +14,6 @@ class CompletionModel {
     return rows;
   }
 
-  /**
-   * Find completions for a habit
-   */
   static async findByHabitId(habitId, limit = 100) {
     const [rows] = await db.query(
       'SELECT * FROM completions WHERE habit_id = ? ORDER BY completion_date DESC LIMIT ?',
@@ -28,9 +22,6 @@ class CompletionModel {
     return rows;
   }
 
-  /**
-   * Find completion by ID
-   */
   static async findById(id) {
     const [rows] = await db.query(
       `SELECT c.*, h.habit_name
@@ -42,9 +33,6 @@ class CompletionModel {
     return rows[0];
   }
 
-  /**
-   * Find completion by habit and date
-   */
   static async findByHabitAndDate(habitId, date) {
     const [rows] = await db.query(
       'SELECT * FROM completions WHERE habit_id = ? AND completion_date = ?',
@@ -53,9 +41,6 @@ class CompletionModel {
     return rows[0];
   }
 
-  /**
-   * Create new completion
-   */
   static async create(completionData) {
     const {
       habit_id,
@@ -70,7 +55,6 @@ class CompletionModel {
       metadata
     } = completionData;
 
-    // Check if completion already exists for this habit and date
     const existing = await this.findByHabitAndDate(habit_id, completion_date);
     if (existing) {
       throw new Error('Completion already exists for this date');
@@ -97,9 +81,6 @@ class CompletionModel {
     return this.findById(result.insertId);
   }
 
-  /**
-   * Update completion
-   */
   static async update(id, completionData) {
     const allowedFields = [
       'completion_value',
@@ -134,17 +115,11 @@ class CompletionModel {
     return this.findById(id);
   }
 
-  /**
-   * Delete completion
-   */
   static async delete(id) {
     const [result] = await db.query('DELETE FROM completions WHERE id = ?', [id]);
     return result.affectedRows > 0;
   }
 
-  /**
-   * Get completions for date range
-   */
   static async findByDateRange(userId, startDate, endDate) {
     const [rows] = await db.query(
       `SELECT c.*, h.habit_name, h.color, h.icon
@@ -157,9 +132,6 @@ class CompletionModel {
     return rows;
   }
 
-  /**
-   * Get completion statistics for a habit
-   */
   static async getHabitStats(habitId) {
     const [stats] = await db.query(
       `SELECT 
@@ -178,9 +150,6 @@ class CompletionModel {
     return stats[0];
   }
 
-  /**
-   * Get user's completion statistics
-   */
   static async getUserStats(userId) {
     const [stats] = await db.query(
       `SELECT 
@@ -195,9 +164,6 @@ class CompletionModel {
     return stats[0];
   }
 
-  /**
-   * Check if completion belongs to user
-   */
   static async belongsToUser(completionId, userId) {
     const [rows] = await db.query(
       'SELECT id FROM completions WHERE id = ? AND user_id = ?',
@@ -206,9 +172,6 @@ class CompletionModel {
     return rows.length > 0;
   }
 
-  /**
-   * Get today's completions for user
-   */
   static async getTodayCompletions(userId) {
     const today = new Date().toISOString().split('T')[0];
     const [rows] = await db.query(
