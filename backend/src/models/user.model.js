@@ -46,19 +46,30 @@ class UserModel {
   }
 
   /**
+   * Search users by username
+   */
+  static async search(query) {
+    const [rows] = await db.query(
+      'SELECT id, username, full_name, avatar_url FROM users WHERE username LIKE ? AND deleted_at IS NULL LIMIT 10',
+      [`%${query}%`]
+    );
+    return rows;
+  }
+
+  /**
    * Create new user
    */
   static async create(userData) {
     const { email, password, username, full_name, timezone, locale } = userData;
-    
+
     // Hash password
     const password_hash = await bcrypt.hash(password, parseInt(process.env.BCRYPT_ROUNDS) || 10);
-    
+
     const [result] = await db.query(
       'INSERT INTO users (email, password_hash, username, full_name, timezone, locale) VALUES (?, ?, ?, ?, ?, ?)',
       [email, password_hash, username, full_name, timezone || 'UTC', locale || 'en']
     );
-    
+
     return this.findById(result.insertId);
   }
 
@@ -68,7 +79,7 @@ class UserModel {
   static async update(id, userData) {
     const allowedFields = ['username', 'full_name', 'avatar_url', 'phone_number', 'timezone', 'locale'];
     const updates = {};
-    
+
     allowedFields.forEach(field => {
       if (userData[field] !== undefined) {
         updates[field] = userData[field];

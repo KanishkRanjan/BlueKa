@@ -81,6 +81,25 @@ class CompletionModel {
     return this.findById(result.insertId);
   }
 
+  static async toggle(completionData) {
+    const { habit_id, user_id, completion_date } = completionData;
+    const date = completion_date || new Date().toISOString().split('T')[0];
+
+    console.log(`[CompletionModel] Toggling habit ${habit_id} for user ${user_id} on date ${date}`);
+
+    const existing = await this.findByHabitAndDate(habit_id, date);
+
+    if (existing) {
+      console.log(`[CompletionModel] Found existing completion ${existing.id}, deleting...`);
+      await this.delete(existing.id);
+      return { action: 'unmarked' };
+    } else {
+      console.log(`[CompletionModel] No existing completion, creating...`);
+      const completion = await this.create({ ...completionData, completion_date: date });
+      return { action: 'marked', data: completion };
+    }
+  }
+
   static async update(id, completionData) {
     const allowedFields = [
       'completion_value',

@@ -1,14 +1,15 @@
 const db = require('../config/db');
 
 class HabitModel {
-  static async findByUserId(userId) {
+  static async findByUserId(userId, date = new Date().toISOString().split('T')[0]) {
     const [rows] = await db.query(
-      `SELECT h.*, i.identity_name 
+      `SELECT h.*, i.identity_name,
+       (SELECT COUNT(*) FROM completions c WHERE c.habit_id = h.id AND c.completion_date = ?) > 0 as completed
        FROM habits h
        LEFT JOIN identities i ON h.identity_id = i.id
        WHERE h.user_id = ? AND h.deleted_at IS NULL
        ORDER BY h.created_at DESC`,
-      [userId]
+      [date, userId]
     );
     return rows;
   }
@@ -147,14 +148,15 @@ class HabitModel {
     return rows[0];
   }
 
-  static async findActiveByUserId(userId) {
+  static async findActiveByUserId(userId, date = new Date().toISOString().split('T')[0]) {
     const [rows] = await db.query(
-      `SELECT h.*, i.identity_name 
+      `SELECT h.*, i.identity_name,
+       (SELECT COUNT(*) FROM completions c WHERE c.habit_id = h.id AND c.completion_date = ?) > 0 as completed
        FROM habits h
        LEFT JOIN identities i ON h.identity_id = i.id
        WHERE h.user_id = ? AND h.is_active = TRUE AND h.deleted_at IS NULL
        ORDER BY h.created_at DESC`,
-      [userId]
+      [date, userId]
     );
     return rows;
   }

@@ -11,7 +11,7 @@ exports.getAll = asyncHandler(async (req, res) => {
 
 exports.getById = asyncHandler(async (req, res) => {
   const squad = await SquadModel.findById(req.params.id);
-  
+
   if (!squad) {
     return response.notFound(res, 'Squad');
   }
@@ -224,11 +224,9 @@ exports.joinByCode = asyncHandler(async (req, res) => {
 exports.search = asyncHandler(async (req, res) => {
   const { q, limit } = req.query;
 
-  if (!q) {
-    return response.validationError(res, [{ field: 'q', message: 'Search query is required' }]);
-  }
+  const searchTerm = q || '';
 
-  const squads = await SquadModel.searchPublic(q, limit ? parseInt(limit) : 20);
+  const squads = await SquadModel.searchPublic(searchTerm, limit ? parseInt(limit) : 20);
   return response.success(res, squads, 'Squads retrieved successfully');
 });
 

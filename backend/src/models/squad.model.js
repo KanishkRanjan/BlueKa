@@ -3,7 +3,9 @@ const db = require('../config/db');
 class SquadModel {
   static async findByUserId(userId) {
     const [rows] = await db.query(
-      `SELECT s.*, sm.role, sm.joined_at
+      `SELECT s.*, 
+       (SELECT COUNT(*) FROM squad_members WHERE squad_id = s.id AND is_active = TRUE) as current_member_count,
+       sm.role, sm.joined_at
        FROM squads s
        JOIN squad_members sm ON s.id = sm.squad_id
        WHERE sm.user_id = ? AND sm.is_active = TRUE AND s.deleted_at IS NULL
@@ -15,7 +17,10 @@ class SquadModel {
 
   static async findById(id) {
     const [rows] = await db.query(
-      'SELECT * FROM squads WHERE id = ? AND deleted_at IS NULL',
+      `SELECT s.*,
+       (SELECT COUNT(*) FROM squad_members WHERE squad_id = s.id AND is_active = TRUE) as current_member_count
+       FROM squads s
+       WHERE s.id = ? AND s.deleted_at IS NULL`,
       [id]
     );
     return rows[0];
@@ -144,6 +149,11 @@ class SquadModel {
       [squadId, userId, invitedBy]
     );
 
+    await db.query(
+      'UPDATE squads SET current_member_count = current_member_count + 1 WHERE id = ?',
+      [squadId]
+    );
+
     return true;
   }
 
@@ -152,6 +162,14 @@ class SquadModel {
       'UPDATE squad_members SET is_active = FALSE WHERE squad_id = ? AND user_id = ?',
       [squadId, userId]
     );
+
+    if (result.affectedRows > 0) {
+      await db.query(
+        'UPDATE squads SET current_member_count = GREATEST(current_member_count - 1, 0) WHERE id = ?',
+        [squadId]
+      );
+    }
+
     return result.affectedRows > 0;
   }
 
@@ -206,11 +224,13 @@ class SquadModel {
 
   static async searchPublic(searchTerm, limit = 20) {
     const [rows] = await db.query(
-      `SELECT * FROM squads 
-       WHERE squad_type = 'public' 
-       AND is_active = TRUE 
-       AND deleted_at IS NULL
-       AND (squad_name LIKE ? OR description LIKE ?)
+      `SELECT s.*,
+       (SELECT COUNT(*) FROM squad_members WHERE squad_id = s.id AND is_active = TRUE) as current_member_count
+       FROM squads s
+       WHERE s.squad_type = 'public' 
+       AND s.is_active = TRUE 
+       AND s.deleted_at IS NULL
+       AND (s.squad_name LIKE ? OR s.description LIKE ?)
        ORDER BY current_member_count DESC
        LIMIT ?`,
       [`%${searchTerm}%`, `%${searchTerm}%`, limit]

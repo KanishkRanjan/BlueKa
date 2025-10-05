@@ -6,7 +6,7 @@ Complete REST API documentation for the Atomize habit tracking application.
 ```
 http://localhost:3000/api
 ```
-
+fix 
 ## Authentication
 
 Most endpoints require authentication using JWT tokens. Include the token in the Authorization header:

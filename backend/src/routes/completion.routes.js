@@ -7,6 +7,7 @@ router.use(auth);
 
 router.get('/', completionController.getAll);
 router.post('/', completionController.create);
+router.post('/toggle', completionController.toggle);
 router.get('/today', completionController.getToday);
 router.get('/stats', completionController.getUserStats);
 router.get('/habit/:habitId', completionController.getByHabitId);

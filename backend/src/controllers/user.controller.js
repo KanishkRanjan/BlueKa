@@ -3,9 +3,20 @@ const response = require('../utils/response');
 const UserModel = require('../models/user.model');
 
 
+exports.search = asyncHandler(async (req, res) => {
+  const { username } = req.query;
+
+  if (!username) {
+    return response.validationError(res, [{ field: 'username', message: 'Username query is required' }]);
+  }
+
+  const users = await UserModel.search(username);
+  return response.success(res, users, 'Users found successfully');
+});
+
 exports.getById = asyncHandler(async (req, res) => {
   const user = await UserModel.findById(req.params.id);
-  
+
   if (!user) {
     return response.notFound(res, 'User');
   }
