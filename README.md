@@ -10,6 +10,17 @@ BlueKa is a comprehensive habit tracking and identity formation application desi
 -   **Visual Progress:** View streaks and progress for each habit.
 -   **Customizable:** Set frequency, reminders, and colors for your habits.
 
+
+## Screenshots
+
+<div style="display: flex; flex-direction: row; overflow-x: auto; gap: 10px;">
+  <img src="assets/screenshots/screenshot-1.png" alt="Home Screen" width="200" />
+  <img src="assets/screenshots/screenshot-2.png" alt="Profile" width="200" />
+  <img src="assets/screenshots/screenshot-3.png" alt="Squads" width="200" />
+  <img src="assets/screenshots/screenshot-4.png" alt="Identity" width="200" />
+  <img src="assets/screenshots/screenshot-5.png" alt="New Identity" width="200" />
+</div>
+
 ## Tech Stack
 
 ### Frontend (Mobile App)
