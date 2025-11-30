@@ -1,33 +1,93 @@
+# BlueKa
 
+BlueKa is a comprehensive habit tracking and identity formation application designed to help users build better habits and achieve their personal goals. It features a mobile application built with React Native (Expo) and a backend API powered by Node.js and MySQL.
 
-My Habit App - BlueKa
-hi. this is a project i made. its a habit tracker app for your phone.
+## Features
 
-i read this book, "Atomic Habits", and it had some cool ideas. the main thing is that to build good habits, you should focus on who you want to be, not just what you want to do. like, instead of "i want to read a book", you think "i am a reader".   
+-   **Identity-Based Habits:** Create habits linked to specific identities you want to cultivate.
+-   **Squads:** Join or create squads to track habits together with friends or like-minded individuals.
+-   **Detailed Tracking:** Log completions with energy levels, mood, and notes.
+-   **Visual Progress:** View streaks and progress for each habit.
+-   **Customizable:** Set frequency, reminders, and colors for your habits.
 
-so i tried to make an app based on that. every time you do a habit, it's like you're casting a vote for the person you want to become.   
+## Tech Stack
 
-What it does
-Identity-Based Habits: The first thing you do is decide what kind of person you want to be. like "I am a writer" or "I am an athlete".   
+### Frontend (Mobile App)
+-   **Framework:** React Native with Expo (~54.0.25)
+-   **Language:** JavaScript
+-   **Styling:** Tailwind CSS (NativeWind)
+-   **Navigation:** React Navigation (Native Stack & Bottom Tabs)
+-   **State/Storage:** React Native Async Storage
+-   **Networking:** Axios
 
-Start Small (2-Minute Rule): The book says any new habit should take less than two minutes. so when you make a new habit like "read more", the app will suggest something small like "read one page". the point is just to show up.   
+### Backend (API)
+-   **Runtime:** Node.js
+-   **Framework:** Express.js
+-   **Database:** MySQL
+-   **ORM/Driver:** mysql2
+-   **Authentication:** JWT (JSON Web Tokens) & bcryptjs
 
-Habit Stacking: You can link a new habit to one you already do. like "After I brush my teeth, I will meditate for one minute".   
+## Prerequisites
 
-Temptation Bundling: You can link something you need to do with something you want to do. like "I will only listen to my favorite podcast when I'm on a run".   
+-   Node.js (v18 or higher recommended)
+-   npm or yarn
+-   Expo Go app on your mobile device (for testing) or an emulator.
+-   MySQL Server
 
-It feels good: when you finish a habit, there's a nice animation and a little buzz. it's supposed to be satisfying so your brain wants to do it again.   
+## Installation
 
-Tech stuff I used
-i'm still learning a lot of this so i tried to keep it simple.
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd BlueKa
+    ```
 
-The App (Frontend): It's a React Native app. I used Expo because it's just easier to get started than the normal React Native CLI.
+2.  **Install Frontend Dependencies:**
+    ```bash
+    npm install
+    ```
 
-The Server (Backend): For the backend, I made a server with Node.js and Express. This is what the app talks to, to save and get all your habits and stuff. You can't just connect the app straight to the database, that's a really bad idea.
+3.  **Install Backend Dependencies:**
+    ```bash
+    cd backend
+    npm install
+    ```
 
-The Database: I used MySQL to store all the data.
+## Database Setup
 
-Styling: I used NativeWind, which is basically Tailwind CSS for React Native. It makes styling faster than writing all the StyleSheet stuff by hand.
+1.  Ensure your MySQL server is running.
+2.  Create a database for the application.
+3.  Configure the database connection in a `.env` file in the `backend` directory (refer to `backend/index.js` or `backend/init_db.js` for required variables, typically `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`).
+4.  Run the initialization script to set up the schema:
+    ```bash
+    cd backend
+    node init_db.js
+    # OR manually import schema.sql
+    mysql -u <user> -p <database_name> < schema.sql
+    ```
 
-State Management: To handle the data inside the app, I used Zustand. I looked at Redux but it seemed like a lot of work. Zustand is way simpler.   
+## Running the Application
 
+### Start the Backend
+```bash
+cd backend
+npm start
+# OR for development with nodemon
+npm run dev
+```
+The server typically runs on port 3000.
+
+### Start the Frontend
+```bash
+# In the root directory
+npm start
+```
+This will start the Expo development server. Scan the QR code with the Expo Go app on your phone or press `a` for Android emulator / `i` for iOS simulator.
+
+## Project Structure
+
+-   `src/`: Frontend source code (screens, components, navigation).
+-   `backend/`: Backend API source code.
+    -   `index.js`: Entry point for the API.
+    -   `schema.sql`: Database schema definitions.
+-   `assets/`: Static assets (images, fonts).
