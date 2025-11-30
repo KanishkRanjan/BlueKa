@@ -31,3 +31,4 @@ yarn-error.*
 
 **/*.md
 create_git_history.sh
+restore_history.sh
